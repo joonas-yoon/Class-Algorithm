@@ -7,6 +7,14 @@
 #include <cstddef>
 #include <iostream>
 
+#define CASE_FAIL -1
+#define CASE_ROOT  0
+#define CASE_1_1   1
+#define CASE_2_1   2
+#define CASE_2_4   3
+#define CASE_X_2   4
+#define CASE_X_3   5
+
 template <class Type>
 class RBTree {
 public:
@@ -25,7 +33,13 @@ public:
 
 private:
 	Node<Type>* _insert(Node<Type>*, Node<Type>*);
+	Node<Type>* _delete(Node<Type>*);
+	Node<Type>* _search(Node<Type>*, Type);
+	Node<Type>* _findMaxNode(Node<Type>*);
+
 	void _coloringAfterInsert(Node<Type>*);
+
+	int whatCaseOf(Node<Type>*);
 
 	Node<Type>* _rotateLeft(Node<Type>*);
 	Node<Type>* _rotateRight(Node<Type>*);
@@ -39,6 +53,11 @@ private:
 
 template <class Type>
 void RBTree<Type>::Insert(Type data){
+	if (_isNull(_search(root, data)) == false){
+		std::cout << data << " : Already Exists\n";
+		return;
+	}
+
 	Node<Type> *newNode = new Node<Type>(data, nil, nil);
 	if (!root){
 		root = newNode;
@@ -49,11 +68,6 @@ void RBTree<Type>::Insert(Type data){
 	}
 	root->setBlackColor();
 	root->parent = nil;
-}
-
-template <class Type>
-void RBTree<Type>::Delete(Type data){
-	return;
 }
 
 template <class Type>
@@ -117,6 +131,110 @@ void RBTree<Type>::_coloringAfterInsert(Node<Type> *x){
 			_coloringAfterInsert(x);
 		}
 	}
+}
+
+template <class Type>
+void RBTree<Type>::Delete(Type data){
+	Node<Type> *delNode = _search(root, data);
+	_delete(delNode);
+}
+
+template <class Type>
+Node<Type>* RBTree<Type>::_delete(Node<Type> *node){
+	if (_isNull(node)) return nil;
+
+	bool hasLeft = ! _isNull(node->left),
+		hasRight = ! _isNull(node->right);
+	
+	if (hasLeft && hasRight){
+		Node<Type>* rightMax = _findMaxNode(node->left);
+		node->key = rightMax->key;
+		node->color = rightMax->color;
+		rightMax->parent->left = nil;
+		node->left = _delete(node->left);
+	}
+	else if (hasLeft && hasRight == false){
+		Node<Type>* cur = node;
+		cur = cur->left;
+		cur->parent->left = cur;
+		if (node == root) root = cur;
+		delete node;
+	}
+	else if (hasLeft == false && hasRight){
+		Node<Type>* cur = node;
+		cur = cur->right;
+		cur->parent->right = cur;
+		if (node == root) root = cur;
+		delete node;
+	}
+	else {
+		if (node == root) root = nil;
+		delete node;
+		node = nil;
+	}
+
+	return node;
+}
+
+template <class Type>
+Node<Type>* RBTree<Type>::_search(Node<Type> *node, Type data){
+	if (_isNull(node)) return nil;
+
+	Type key = node->getKey();
+	if (key == data) return node;
+	else if (key < data) return _search(node->right, data);
+	else return _search(node->left, data);
+}
+
+template <class Type>
+Node<Type>* RBTree<Type>::_findMaxNode(Node<Type> *node) {
+	if (_isNull(node->right))
+		return node;
+	return _findMaxNode(node->right);
+}
+
+template <class Type>
+int RBTree<Type>::whatCaseOf(Node<Type> *nodeX){
+	if (!nodeX) return CASE_FAIL;
+
+	bool isParentRed = false; // p
+	bool isUncleRed = false; // s
+	bool isCousinLeftRed = false; // l
+	bool isCousinRightRed = false; // r
+
+	Node<Type>* p = nodeX->parent;
+	if (p){
+		isParentRed |= p->isRed();
+		Node<Type>* s = nodeX->getUncle();
+		if (s){
+			isUncleRed |= s->isRed();
+			isCousinLeftRed |= s->left && s->left->isRed();
+			isCousinRightRed |= s->right && s->right->isRed();
+		}
+	}
+	else {
+		nodeX->setRedColor();
+		return CASE_ROOT;
+	}
+
+	if (isParentRed && !isUncleRed){
+		// CASE 1:
+		if (isCousinRightRed) return CASE_X_2;
+		if (isCousinLeftRed) return CASE_X_3;
+		return CASE_1_1;
+	}
+	else if( !isParentRed ){
+		// CASE 2:
+		if (isUncleRed){
+			if (isCousinLeftRed || isCousinRightRed) return CASE_FAIL;
+			return CASE_2_4;
+		}
+		if (isCousinRightRed) return CASE_X_2;
+		if (isCousinLeftRed) return CASE_X_3;
+		return CASE_2_1;
+	}
+
+	return CASE_FAIL;
 }
 
 template <class Type>
