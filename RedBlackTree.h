@@ -28,7 +28,7 @@ public:
 
 	void Insert(Type);
 	void Delete(Type);
-	void Print(Node<Type>* n, int d = 0);
+	void Print(Node<Type>* n, int d = 0, bool isLeft = true);
 
 	Node<Type>* getRoot() const { return this->root; }
 
@@ -502,14 +502,14 @@ Node<Type>* RBTree<Type>::_rotateLeft(Node<Type> *x){
 }
 
 template <class Type>
-void RBTree<Type>::Print(Node<Type> *n, int dep){
+void RBTree<Type>::Print(Node<Type> *n, int dep, bool isLeft){
 	if (_isNull(n)) return;
 	for (int i = 0; i < dep; ++i){
-		printf(" %c ", i == dep-1 ? '|' : ' ');
+		printf(" |%c ", i == dep - 1 ? (isLeft ? 'L' : 'R') : ' ');
 	}
-	std::cout<< n->key << (n->isRed() ? "[R]":"[B]") <<'\n';
+	std::cout << n->key << (n->isRed() ? "[R]" : "[B]") << '\n';
 	Print(n->left, dep + 1);
-	Print(n->right, dep + 1);
+	Print(n->right, dep + 1, false);
 }
 
 template <class Type>
