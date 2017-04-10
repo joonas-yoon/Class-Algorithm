@@ -32,12 +32,31 @@ public:
 	}
 
 	Type getKey() const { return this->key; }
+	Node<Type>* getUncle() {
+		Node<Type>* p = this->parent;
+		if (!p) return new Node<Type>(-1, NULL, NULL);
+		if (this->isLeftNode()) return p->right;
+		else return p->left;
+	}
 
 	void setRedColor(){ this->color = RED; }
 	void setBlackColor(){ this->color = BLACK; }
+	void swapColor(Node<Type>* node){
+		int c = this->color;
+		this->color = node->color;
+		node->color = c;
+	}
 
 	bool isRed() const { return this->color == RED; }
 	/* bool isBlack() const { return this->color == BLACK; } */
+	bool isLeftNode() const {
+		if (this->parent) return this->parent->left == this;
+		return false;
+	}
+	bool isRightNode() const {
+		if (this->parent) return this->parent->right == this;
+		return false;
+	}
 	bool isLeaf() const {
 		return !this->left || !this->right;
 	}

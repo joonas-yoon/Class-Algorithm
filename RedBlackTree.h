@@ -25,6 +25,10 @@ public:
 
 private:
 	Node<Type>* _insert(Node<Type>*, Node<Type>*);
+	void _coloringAfterInsert(Node<Type>*);
+
+	Node<Type>* _rotateLeft(Node<Type>*);
+	Node<Type>* _rotateRight(Node<Type>*);
 
 	bool _isNull(Node<Type>*);
 
@@ -41,7 +45,7 @@ void RBTree<Type>::Insert(Type data){
 	}
 	else {
 		root = _insert(root, newNode);
-		// _coloring(newNode);
+		_coloringAfterInsert(newNode);
 	}
 	root->setBlackColor();
 	root->parent = nil;
@@ -68,6 +72,105 @@ Node<Type>* RBTree<Type>::_insert(Node<Type> *node, Node<Type> *newItem){
 		child->parent = node;
 	}
 	return node;
+}
+
+template <class Type>
+void RBTree<Type>::_coloringAfterInsert(Node<Type> *x){
+	if (_isNull(x) || _isNull(x->parent)) return;
+	// 루트이거나 블랙 노드면 문제가 없다.
+	if (x == root || !x->isRed()) return;
+	Node<Type> *p = x->parent;
+	// 레드 노드는 레드인 자식을 가질 수 없다. 조정이 필요하다.
+	if (p == root || !p->isRed()) return;
+
+	// 삽입된 현재 노드는 레드, 부모 노드도 레드인 상황
+
+	Node<Type> *s = p->getUncle(), *pp = p->parent;
+	// CASE 1 (Double Red)
+	if (s->isRed()){
+		p->setBlackColor();
+		s->setBlackColor();
+		pp->setRedColor();
+		_coloringAfterInsert(pp);
+	}
+	// CASE 2 (Unbalanced)
+	else {
+		bool xLeft = x->isLeftNode(),
+			 pLeft = p->isLeftNode();
+
+		// CASE 2-1
+		// 방향이 엇갈리는 상황 (XOR)
+		if (xLeft ^ pLeft){
+			if (xLeft)
+				_rotateRight(p);
+			else 
+				_rotateLeft(p);
+			_coloringAfterInsert(p);
+		}
+		// CASE 2-2
+		else {
+			if (pLeft)
+				_rotateRight(pp);
+			else
+				_rotateLeft(pp);
+			p->swapColor(pp);
+			_coloringAfterInsert(x);
+		}
+	}
+}
+
+template <class Type>
+Node<Type>* RBTree<Type>::_rotateRight(Node<Type> *x){
+	if (_isNull(x)) return x;
+	Node<Type> *l = x->left, *r = x->right, *p = x->parent;
+
+	bool isLeft = x->isLeftNode();
+
+	x->left = l->right;
+	x->left->parent = x;
+	l->right = x;
+	l->right->parent = l;
+
+	// (부모/자식 관계를 갱신)
+	// 돌리려는 중심이 루트였다면 루트를 변경
+	if (x == root){
+		root = l;
+		root->parent = nil;
+	}
+	else {
+		l->parent = p;
+		if (isLeft) p->left = l;
+		else p->right = l;
+	}
+
+	// 새로운 중심을 반환한다.
+	return l;
+}
+
+template <class Type>
+Node<Type>* RBTree<Type>::_rotateLeft(Node<Type> *x){
+	if (_isNull(x)) return x;
+	Node<Type> *l = x->left, *r = x->right, *p = x->parent;
+
+	bool isLeft = x->isLeftNode();
+
+	x->right = r->left;
+	x->right->parent = x;
+	r->left = x;
+	r->left->parent = r;
+
+	if (x == root){
+		root = r;
+		root->parent = nil;
+	}
+	else {
+		r->parent = p;
+		if (isLeft) p->left = r;
+		else p->right = r;
+	}
+
+	// 새로운 중심을 반환한다.
+	return r;
 }
 
 template <class Type>
