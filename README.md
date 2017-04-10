@@ -10,3 +10,8 @@ using redirection
 ```
 $ ./main.exe < input.txt > output.txt
 ```
+
+**Generate Test case with Python** (Python 2.7.6)
+```
+$ python generator.py > input.txt
+```

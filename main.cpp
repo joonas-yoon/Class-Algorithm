@@ -4,11 +4,22 @@
 using namespace std;
 
 int main(){
-	int x;
+	char cmd;
+	int number;
 	RBTree<int> rbtree;
-	while (cin >> x){
-		cout << "Inserted " << x << '\n';
-		rbtree.Insert(x);
+	while (cin >> cmd >> number){
+		if (cmd == 'x') break;
+
+		if (cmd == 'i'){
+			cout << "Insert " << number << '\n';
+			rbtree.Insert(number);
+		}
+		else {
+			cout << "Delete " << number << '\n';
+			rbtree.Delete(number);
+		}
+
+		// print for debug
 		rbtree.Print(rbtree.getRoot());
 	}
 	return 0;
