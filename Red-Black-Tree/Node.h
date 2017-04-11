@@ -7,11 +7,11 @@
 #include <cstddef> // NULL
 
 template <class Type>
-class RBTree;
+class RedBlackTree;
 
 template <class Type>
 class Node {
-	friend class RBTree<Type>;
+	friend class RedBlackTree<Type>;
 public:
 	Node() : left(NULL), right(NULL), parent(NULL), color(RED) {}
 	Node(Type key, Node<Type>* l = NULL, Node<Type>* r = NULL){
