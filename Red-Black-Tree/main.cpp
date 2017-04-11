@@ -6,7 +6,7 @@ using namespace std;
 int main(){
 	char cmd;
 	int number;
-	RBTree<int> rbtree;
+	RedBlackTree<int> rbtree;
 	while (cin >> cmd >> number){
 		if (cmd == 'x') break;
 
@@ -20,7 +20,7 @@ int main(){
 		}
 
 		// print for debug
-		rbtree.Print(rbtree.getRoot());
+		rbtree.Print();
 	}
 	return 0;
 }
