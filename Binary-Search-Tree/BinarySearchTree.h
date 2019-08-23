@@ -85,13 +85,16 @@ public:
          
         if (node->right == NULL){
             // have no child
-            return node->left;
+            Node<Type>* left = node->left;
+            delete node;
+            return left;
         }
         else {
             Node<Type>* child = node->right;
             if( child->left == NULL ){
                 node->key = child->key;
                 node->right = child->right;
+                delete child;
                 return node;
             }
  
@@ -105,6 +108,7 @@ public:
             // left child have no right child
             if (child == node->right) node->right = child->right;
             else parent->left = child->right;
+            delete child;
             return node;
         }
     }
