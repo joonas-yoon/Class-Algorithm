@@ -21,13 +21,11 @@ template <class Type>
 class RedBlackTree {
 public:
 	RedBlackTree() {
-		Node<Type> *_nil = new Node<Type>(-INF, NULL, NULL);
-		nil = new Node<Type>(-INF, _nil, _nil);
+		nil = new Node<Type>();
 		nil->setBlackColor();
 		root = nil;
 	}
 	~RedBlackTree(){ root = nil = NULL; }
-
 
 	void Insert(Type);
 	void Delete(Type);
