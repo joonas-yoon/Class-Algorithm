@@ -13,11 +13,12 @@ template <class Type>
 class Node {
 	friend class RedBlackTree<Type>;
 public:
-	Node() : left(NULL), right(NULL), parent(NULL), color(RED) {}
+	Node() : key(), left(NULL), right(NULL), parent(NULL), color(RED) {}
 	Node(Type key, Node<Type>* l = NULL, Node<Type>* r = NULL){
 		this->key = key;
 		this->left = l;
 		this->right = r;
+		this->parent = NULL;
 		this->color = RED;
 	}
 	Node(Node<Type>& node){
@@ -34,7 +35,7 @@ public:
 	Type getKey() const { return this->key; }
 	Node<Type>* getUncle() {
 		Node<Type>* p = this->parent;
-		if (!p) return new Node<Type>(-1, NULL, NULL);
+		if (!p) return new Node<Type>();
 		if (this->isLeftNode()) return p->right;
 		else return p->left;
 	}
