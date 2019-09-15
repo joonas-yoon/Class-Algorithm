@@ -1,10 +1,14 @@
-#pragma once
+#ifndef REDBLACKTREE_H
+#define REDBLACKTREE_H
 
 #include "Node.h"
 
 #include <cstdio>
-#include <cstddef> // NULL
 #include <iostream>
+
+#ifndef NULL
+#define NULL 0
+#endif
 
 #define CASE_AUTO -2
 #define CASE_FAIL -1
@@ -528,3 +532,5 @@ template <class Type>
 bool RedBlackTree<Type>::_isNull(Node<Type> *x){
 	return x == NULL || x == nil;
 }
+
+#endif

@@ -4,7 +4,9 @@
 #define RED   0
 #define BLACK 1
 
-#include <cstddef> // NULL
+#ifndef NULL
+#define NULL 0
+#endif
 
 template <class Type>
 class RedBlackTree;
