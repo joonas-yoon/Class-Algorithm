@@ -159,14 +159,15 @@ void RedBlackTree<Type>::Delete(Type data){
 	bool hasProblem = _detectDanger(delNode);
 	Node<Type> *newMid = _delete(delNode, &hasProblem);
 #ifdef DEBUG
-	printf("삭제 후 새로운 X : %d ", newMid->key);
-	printf("(parent: %d)\n", newMid->parent ? newMid->parent->key : -1);
-	puts("+--------------------------+");
-	puts("색상 변경 전"); Print(root);
+	std::cout << "삭제 후 새로운 X : " << newMid->key << ' ';
+	std::cout << "(parent: " << (newMid->parent ? newMid->parent->key : -1) << ")\n";
+	std::cout << "+--------------------------+" << std::endl;
+	std::cout << "색상 변경 전" << std::endl;
+	Print(root);
 #endif
 	if (hasProblem){
 #ifdef DEBUG
-		puts("색상 변경 후");
+		std::cout << "색상 변경 후" << std::endl;
 #endif
 		_coloringAfterDelete(newMid);
 #ifdef DEBUG
@@ -174,7 +175,7 @@ void RedBlackTree<Type>::Delete(Type data){
 #endif
 	}
 #ifdef DEBUG
-	puts("+--------------------------+");
+	std::cout << "+--------------------------+" << std::endl;
 #endif
 }
 
@@ -213,7 +214,7 @@ Node<Type>* RedBlackTree<Type>::_delete(Node<Type> *node, bool *hasProblem){
 			rightMax->left->parent = rightMax;
 			newMid = rightMax->left;
 #ifdef DEBUG
-			printf("[%d] is %s\n", rightMax->key, rightMax->isRed() ? "RED" : "BLACK");
+			std::cout << "[" << rightMax->key << "] is " << (rightMax->isRed() ? "RED" : "BLACK") << std::endl;
 #endif
 			*hasProblem |= rightMax->isRed() == false;
 		}
@@ -310,7 +311,8 @@ void RedBlackTree<Type>::_coloringAfterDelete(Node<Type> *x, int caseNumber){
 	if (x->isRed()){
 		// 자기 앞에 블랙이 빠진거므로 자신을 레드로 바꾼다.
 #ifdef DEBUG
-		printf("스스로를 블랙으로 바꾸면 해결됩니다. (기준점: %d (parent :%d))\n", x->key, x->parent->key);
+		std::cout << "스스로를 블랙으로 바꾸면 해결됩니다. ";
+		std::cout << "(기준점: " << x->key << " (parent: " << x->parent->key << "))\n";
 #endif
 		x->setBlackColor();
 		return;
@@ -318,7 +320,8 @@ void RedBlackTree<Type>::_coloringAfterDelete(Node<Type> *x, int caseNumber){
 
 #ifdef DEBUG
 	char str[8][5] = { "AUTO", "FAIL", "ROOT", "1-1", "2-1", "2-4", "*-2", "*-3" };
-	printf("CASE %s에 대해 검사합니다. (기준점: %d (parent: %d))\n", str[caseNumber - CASE_AUTO], x->key, x->parent->key);
+	std::cout << "CASE " << str[caseNumber - CASE_AUTO] << "에 대해 검사합니다. ";
+	std::cout << "(기준점: " << x->key << " (parent: " << x->parent->key << "))\n";
 #endif
 
 	bool isLeft = x->isLeftNode();
