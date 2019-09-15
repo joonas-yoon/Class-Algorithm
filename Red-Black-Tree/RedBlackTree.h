@@ -3,8 +3,10 @@
 
 #include "Node.h"
 
-#include <cstdio>
-#include <iostream>
+// if you want to see messages for debug, uncomment following:
+// #define DEBUG
+
+#include <iostream> // cout, swap
 
 #ifndef NULL
 #define NULL 0
@@ -149,21 +151,31 @@ template <class Type>
 void RedBlackTree<Type>::Delete(Type data){
 	Node<Type> *delNode = _search(root, data);
 	if (_isNull(delNode)){
+#ifdef DEBUG
 		std::cerr << data << " : Not Exists\n";
+#endif
 		return;
 	}
 	bool hasProblem = _detectDanger(delNode);
 	Node<Type> *newMid = _delete(delNode, &hasProblem);
+#ifdef DEBUG
 	printf("삭제 후 새로운 X : %d ", newMid->key);
 	printf("(parent: %d)\n", newMid->parent ? newMid->parent->key : -1);
 	puts("+--------------------------+");
 	puts("색상 변경 전"); Print(root);
+#endif
 	if (hasProblem){
+#ifdef DEBUG
 		puts("색상 변경 후");
+#endif
 		_coloringAfterDelete(newMid);
+#ifdef DEBUG
 		Print(root);
+#endif
 	}
+#ifdef DEBUG
 	puts("+--------------------------+");
+#endif
 }
 
 template <class Type>
@@ -200,7 +212,9 @@ Node<Type>* RedBlackTree<Type>::_delete(Node<Type> *node, bool *hasProblem){
 
 			rightMax->left->parent = rightMax;
 			newMid = rightMax->left;
+#ifdef DEBUG
 			printf("[%d] is %s\n", rightMax->key, rightMax->isRed() ? "RED" : "BLACK");
+#endif
 			*hasProblem |= rightMax->isRed() == false;
 		}
 		else {
@@ -295,13 +309,17 @@ void RedBlackTree<Type>::_coloringAfterDelete(Node<Type> *x, int caseNumber){
 	// 블랙 노드가 아닌 레드 노드가 입력에 들어온다면
 	if (x->isRed()){
 		// 자기 앞에 블랙이 빠진거므로 자신을 레드로 바꾼다.
+#ifdef DEBUG
 		printf("스스로를 블랙으로 바꾸면 해결됩니다. (기준점: %d (parent :%d))\n", x->key, x->parent->key);
+#endif
 		x->setBlackColor();
 		return;
 	}
 
+#ifdef DEBUG
 	char str[8][5] = { "AUTO", "FAIL", "ROOT", "1-1", "2-1", "2-4", "*-2", "*-3" };
 	printf("CASE %s에 대해 검사합니다. (기준점: %d (parent: %d))\n", str[caseNumber - CASE_AUTO], x->key, x->parent->key);
+#endif
 
 	bool isLeft = x->isLeftNode();
 
