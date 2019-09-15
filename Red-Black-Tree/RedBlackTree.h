@@ -15,8 +15,6 @@
 #define CASE_X_2   4
 #define CASE_X_3   5
 
-#define INF 987654321
-
 template <class Type>
 class RedBlackTree {
 public:
@@ -25,12 +23,17 @@ public:
 		nil->setBlackColor();
 		root = nil;
 	}
-	~RedBlackTree(){ root = nil = NULL; }
+	~RedBlackTree(){
+		bool nothing;
+		_delete(root, &nothing);
+		root = nil = NULL;
+	}
 
 	void Insert(Type);
 	void Delete(Type);
 	void Print(){ Print(this->root); }
 	void Print(Node<Type>* n, int d = 0, bool isLeft = true);
+	bool Find(Type);
 
 	Node<Type>* getRoot() const { return this->root; }
 
@@ -39,7 +42,7 @@ private:
 	Node<Type>* _delete(Node<Type>*, bool*);
 	Node<Type>* _search(Node<Type>*, Type);
 	Node<Type>* _findMaxNode(Node<Type>*);
-	
+
 	void _coloringAfterInsert(Node<Type>*);
 	void _coloringAfterDelete(Node<Type>*, int caseNumber = CASE_AUTO);
 
@@ -59,7 +62,6 @@ private:
 template <class Type>
 void RedBlackTree<Type>::Insert(Type data){
 	if (_isNull(_search(root, data)) == false){
-		std::cout << data << " : Already Exists\n";
 		return;
 	}
 
@@ -171,7 +173,7 @@ Node<Type>* RedBlackTree<Type>::_delete(Node<Type> *node, bool *hasProblem){
 
 	bool isLeft = node->isLeftNode(),
 		isRight = node->isRightNode();
-	
+
 	if (hasLeft && hasRight){
 		Node<Type>* rightMax = _findMaxNode(node->left);
 
@@ -239,7 +241,7 @@ Node<Type>* RedBlackTree<Type>::_delete(Node<Type> *node, bool *hasProblem){
 		*hasProblem &= cur->isRed() == false;
 		node->swapColor(cur);
 		delete node;
-		
+
 		cur->right->parent = cur;
 		return cur->right;
 	}
@@ -354,6 +356,12 @@ void RedBlackTree<Type>::_coloringAfterDelete(Node<Type> *x, int caseNumber){
 }
 
 template <class Type>
+bool RedBlackTree<Type>::Find(Type data){
+	Node<Type> *node = _search(this->root, data);
+	return _isNull(node) == false;
+}
+
+template <class Type>
 Node<Type>* RedBlackTree<Type>::_search(Node<Type> *node, Type data){
 	if (_isNull(node)) return nil;
 
@@ -456,7 +464,7 @@ bool RedBlackTree<Type>::_detectDanger(Node<Type> *x){
 template <class Type>
 Node<Type>* RedBlackTree<Type>::_rotateRight(Node<Type> *x){
 	if (_isNull(x)) return x;
-	Node<Type> *l = x->left, *r = x->right, *p = x->parent;
+	Node<Type> *l = x->left, *p = x->parent;
 
 	bool isLeft = x->isLeftNode();
 
@@ -484,7 +492,7 @@ Node<Type>* RedBlackTree<Type>::_rotateRight(Node<Type> *x){
 template <class Type>
 Node<Type>* RedBlackTree<Type>::_rotateLeft(Node<Type> *x){
 	if (_isNull(x)) return x;
-	Node<Type> *l = x->left, *r = x->right, *p = x->parent;
+	Node<Type> *r = x->right, *p = x->parent;
 
 	bool isLeft = x->isLeftNode();
 
