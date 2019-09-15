@@ -37,7 +37,7 @@ public:
 	Type getKey() const { return this->key; }
 	Node<Type>* getUncle() {
 		Node<Type>* p = this->parent;
-		if (!p) return new Node<Type>();
+		if (!p) return nil;
 		if (this->isLeftNode()) return p->right;
 		else return p->left;
 	}

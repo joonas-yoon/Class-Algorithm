@@ -1,21 +1,27 @@
-#pragma once
+#ifndef BINARY_SEARCH_TREE_H
+#define BINARY_SEARCH_TREE_H
  
 #include "Node.h"
-#include <cstdlib>
-#include <cstddef>
+
 #include <iostream>
 
 #define ORDER_PRE  0
-#define ORDER_IN   0
-#define ORDER_POST 0
+#define ORDER_IN   1
+#define ORDER_POST 2
 
+#ifndef NULL
 #define NULL 0
+#endif
  
 template <class Type>
 class BinarySearchTree {
 public:
     BinarySearchTree() : root(NULL) { }
-    ~BinarySearchTree(){ root = NULL; }
+    ~BinarySearchTree(){
+        while (root) {
+            root = deleteNode(root);
+        }
+    }
     
     int Insert(Type x){
         int count = 0;
@@ -29,13 +35,14 @@ public:
     }
     
     void printTree(){
-        puts("Tree-Style:");
-        print_tree(root);
+        std::cout << "Tree-Style:\n";
+        printTree(root);
     }
     void print(int order){
         char *str[3]={"Pre", "In", "Post"};
-        printf("%s-order: ", str[order]);
-        print_order(root, order); puts("");
+        std::cout << str[order] << "-order: ";
+        printOrder(root, order);
+        std::cout << std::endl;
     }
      
     // find parent of node which has X
@@ -114,24 +121,26 @@ public:
     }
      
     Node<Type>* getRoot(){return root;}
-    void print_tree(Node<Type>* n, int dep = 0){
+    void printTree(Node<Type>* n, int dep = 0){
         if(n == NULL) return;
  
         for(int i=0; i<dep; ++i) std::cout<<"    ";
         std::cout<< n->key <<'\n';
  
-        print_tree(n->left, dep+1);
-        print_tree(n->right, dep+1);
+        printTree(n->left, dep+1);
+        printTree(n->right, dep+1);
     }
-    void print_order(Node<Type>* n, int printOrder = ORDER_PRE){
+    void printOrder(Node<Type>* n, int printOrder = ORDER_PRE){
         if(n == NULL) return;
          
         if(printOrder == ORDER_PRE) std::cout<< n->key << ' ';
-        print_order(n->left, printOrder);
+        printOrder(n->left, printOrder);
         if(printOrder == ORDER_IN) std::cout<< n->key << ' ';
-        print_order(n->right, printOrder);
+        printOrder(n->right, printOrder);
         if(printOrder == ORDER_POST) std::cout<< n->key << ' ';
     }
 private:
     Node<Type>* root;
 };
+
+#endif
